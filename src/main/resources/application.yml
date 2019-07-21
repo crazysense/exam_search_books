@@ -1,0 +1,43 @@
+server:
+  port: 8080
+
+logging:
+  level:
+    root: info
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  data:
+    rest:
+      base-path: /api
+
+  h2:
+    console:
+      enabled: true
+
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: none
+  mvc:
+    view:
+      prefix: /views/
+      suffix: .html
+
+search-books:
+  apis:
+    - name: kakao
+      url: https://dapi.kakao.com/v3/search/book
+      header:
+        Authorization: KakaoAK 369c8e08ce194becfba26a21e21fdd20
+    - name: naver
+      url: https://openapi.naver.com/v1/search/book
+      header:
+        X-Naver-Client-Id: DGPpbKfHx6sfFEm2EihP
+        X-Naver-Client-Secret: LFi6RvKWtu
+
