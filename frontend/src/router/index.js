@@ -7,8 +7,8 @@ import store from '@/store'
 Vue.use(Router)
 
 const requireAuth = () => (from, to, next) => {
-  if (store.getters.isLoggedOn) return next()
-  next('/login')
+  console.log('state: ' + store.getters.isLoggedOn)
+  return store.getters.isLoggedOn ? next() : next('/login')
 }
 
 export default new Router({
@@ -25,10 +25,5 @@ export default new Router({
       name: 'Login',
       component: Login
     }
-    // {
-    //   path: '/registration',
-    //   name: 'Registration',
-    //   component: Registration
-    // }
   ]
 })

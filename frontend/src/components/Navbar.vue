@@ -5,8 +5,8 @@
       <b-nav-form>
         <b-input-group>
           <b-dropdown slot="prepend" variant="dark"></b-dropdown>
-          <b-form-input placeholder="Keyword"></b-form-input>
-          <b-button slot="append" variant="success" @click="search">Search</b-button>
+          <b-form-input v-model="keyword" placeholder="Keyword"></b-form-input>
+          <b-button slot="append" variant="success" @click="searchBooks">Search</b-button>
         </b-input-group>
       </b-nav-form>
       <div class="ml-auto">
@@ -36,9 +36,20 @@ Vue.component('b-dropdown-item', BDropdownItem)
 
 export default {
   name: 'Navbar',
+  data () {
+    return {
+      keyword: ''
+    }
+  },
   methods: {
-    search () {
-      alert('Search!')
+    searchBooks () {
+      if (this.keyword.length === 0) {
+        alert('Empty Keyword!')
+      } else {
+        const hostname = this.$hostname
+        const keyword = this.keyword
+        this.$store.dispatch('SEARCH_BOOKS', {hostname, keyword})
+      }
     },
     logout () {
       const router = this.$router

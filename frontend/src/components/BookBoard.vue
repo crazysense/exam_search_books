@@ -1,6 +1,5 @@
 <template>
   <div>
-    <!--<h1>Books</h1>-->
     <b-pagination v-model="currentPage"
                   :total-rows="rows"
                   :per-page="perPage"
@@ -20,13 +19,39 @@
           <p>{{ data.item.contents.substring(0, 100) }} ... </p>
           <p>정가 : {{ data.item.price }} | 판매가 : {{ data.item.salePrice }} | ISBN : {{ data.item.isbn }}</p>
         </template>
+        <template slot="button" slot-scope="data">
+          <b-button v-b-modal.book-detail-modal variant="info" @click="sendToModal(data.item)">Book Details</b-button>
+        </template>
       </b-table>
+    </div>
+    <div>
+      <b-modal id="book-detail-modal" hide-footer title="Book Details">
+        <b-jumbotron :header="selectedItem.title" header-level="5" :lead="authorText(selectedItem)">
+          <b-container fluid>
+            <b-row class="text-left">
+              <b-col md="auto">
+                <b-img :src="selectedItem.thumbnail" fluid></b-img>
+              </b-col>
+              <b-col>
+                <p>출판사 : {{ selectedItem.publisher }}</p>
+                <p>출판일 : {{ selectedItem.datetime }}</p>
+                <p>정가 : {{ selectedItem.price }}</p>
+                <p>판매가 : {{ selectedItem.salePrice }}</p>
+                <p>ISBN :  {{ selectedItem.isbn }}</p>
+              </b-col>
+            </b-row>
+            <b-row>
+              <h3>요약</h3>
+              <p>{{ selectedItem.contents }}...</p>
+            </b-row>
+          </b-container>
+        </b-jumbotron>
+      </b-modal>
     </div>
   </div>
 </template>
 
 <script>
-import axios from 'axios'
 import Vue from 'vue'
 import {BTable, BPagination} from 'bootstrap-vue'
 
@@ -37,35 +62,32 @@ export default {
   name: 'BookBoard',
   data () {
     return {
-      perPage: 5,
+      perPage: 10,
       currentPage: 1,
       fields: [
         {key: 'thumbnail', thStyle: {display: 'none'}},
-        {key: 'details', thStyle: {display: 'none'}}
+        {key: 'details', thStyle: {display: 'none'}},
+        {key: 'button', thStyle: {display: 'none'}}
       ],
-      items: [ ]
+      selectedItem: ''
     }
-  },
-  created () {
-    axios.get(`${this.$hostname}/api/v1/books`, {
-      params: {
-        // TODO
-        keyword: '미움받을 용기'
-      },
-      timeout: 5000
-      // headers: {
-      // TODO
-      // }
-    }).then(res => {
-      console.log(`status code: ${res.status}`)
-      this.items = res.data
-    }).catch(err => {
-      console.log(err)
-    })
   },
   computed: {
     rows () {
-      return this.items.length
+      console.log('111: ' + this.$store.getters.getBooks.length)
+      return this.$store.getters.getBooks.length
+    },
+    items () {
+      console.log('222')
+      return this.$store.getters.getBooks
+    }
+  },
+  methods: {
+    sendToModal (item) {
+      this.selectedItem = item
+    },
+    authorText (item) {
+      return item.author + ' 지음'
     }
   }
 }
