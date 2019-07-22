@@ -1,6 +1,5 @@
 <template>
-  <div :hidden="!logged_in">
-    <!--<h5>Popular Top 10</h5>-->
+  <div>
     <b-list-group horizontal="md row">
       <b-list-group-item class="d-flex justify-content-between align-items-center">
         Cras justo odio
@@ -9,3 +8,18 @@
     </b-list-group>
   </div>
 </template>
+
+<script>
+import Vue from 'vue'
+
+import {BListGroup, BListGroupItem, BBadge} from 'bootstrap-vue'
+
+Vue.component('b-list-group', BListGroup)
+Vue.component('b-list-group-item', BListGroupItem)
+Vue.component('b-badge', BBadge)
+
+export default {
+
+}
+
+</script>

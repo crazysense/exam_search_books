@@ -39,9 +39,20 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import axios from 'axios'
+import validation from '@/module/validation'
+
+import {BForm, BFormGroup, BFormInput, BButton, BAlert} from 'bootstrap-vue'
+
+Vue.component('b-form', BForm)
+Vue.component('b-form-group', BFormGroup)
+Vue.component('b-form-input', BFormInput)
+Vue.component('b-button', BButton)
+Vue.component('b-alert', BAlert)
 
 export default {
+  name: 'Registration',
   data () {
     return {
       regUserId: '',
@@ -57,40 +68,22 @@ export default {
   },
   computed: {
     stateId () {
-      return /^[a-z]{1}[A-Za-z0-9]{4,14}$/.exec(this.regUserId) != null
+      return validation.stateId(this.regUserId) != null
     },
     invalidFeedbackId () {
-      if (this.regUserId.length > 15) {
-        return 'Enter a maxinum of 15 characters'
-      }
-      if (this.regUserId.length > 4) {
-        return ''
-      } else if (this.regUserId.length > 0) {
-        return 'Enter at least 5 characters'
-      } else {
-        return 'Please enter something'
-      }
+      return validation.invalidFeedbackId(this.regUserId)
     },
     validFeedbackId () {
-      return this.stateId === true ? 'Thank you' : ''
+      return validation.validFeedbackId(this.regUserId)
     },
     statePwd () {
-      return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z]{1}[a-zA-Z\d]{7,19}$/.exec(this.regUserPwd) != null
+      return validation.statePwd(this.regUserPwd) != null
     },
     invalidFeedbackPwd () {
-      if (this.regUserPwd.length > 20) {
-        return 'Enter a maxinum of 20 characters'
-      }
-      if (this.regUserPwd.length > 8) {
-        return ''
-      } else if (this.regUserPwd.length > 0) {
-        return 'Enter at least 8 characters'
-      } else {
-        return 'Please enter something'
-      }
+      return validation.invalidFeedbackPwd(this.regUserPwd)
     },
     validFeedbackPwd () {
-      return this.statePwd === true ? 'Thank you' : ''
+      return validation.validFeedbackPwd(this.regUserPwd)
     }
   },
   methods: {
@@ -104,7 +97,7 @@ export default {
         return
       }
 
-      axios.post(`${window.location.origin}/registration`, {
+      axios.post(`${this.$hostname}/user/registration`, {
         userId: this.regUserId,
         userPassword: this.regUserPwd
       }).then(res => {
@@ -116,7 +109,7 @@ export default {
         console.log(err)
         this.regRequestFailed = true
         this.regErrorMessage = err
-      }).finally(out => {
+      }).finally(() => {
         this.regUserId = ''
         this.regUserPwd = ''
       })

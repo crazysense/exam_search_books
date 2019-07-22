@@ -43,15 +43,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public User save(User user) {
-        if (findByUserId(user.getUserId()) != null) {
-            throw HttpServerErrorException
-                    .create(HttpStatus.INTERNAL_SERVER_ERROR, "Already Exist User.",
-                            new HttpHeaders(), null, null);
-        }
-        User registration = new User();
-        registration.setUserId(user.getUserId());
-        registration.setUserPassword(passwordEncoder.encode(user.getUserPassword()));
-        return userRepository.save(registration);
+        return userRepository.save(user);
     }
 
     @Override

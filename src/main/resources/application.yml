@@ -29,6 +29,9 @@ spring:
       prefix: /views/
       suffix: .html
 
+  jwt:
+    secret: myyuk$exam@secret&key
+
 search-books:
   apis:
     - name: kakao
@@ -40,4 +43,3 @@ search-books:
       header:
         X-Naver-Client-Id: DGPpbKfHx6sfFEm2EihP
         X-Naver-Client-Secret: LFi6RvKWtu
-

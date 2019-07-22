@@ -10,6 +10,7 @@ public class Book {
     private String datetime;
     private int price;
     private int salePrice;
+    private String link;
 
     public String getTitle() {
         return title;
@@ -83,4 +84,11 @@ public class Book {
         this.salePrice = salePrice;
     }
 
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
+    }
 }

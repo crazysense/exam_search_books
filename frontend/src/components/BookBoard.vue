@@ -1,5 +1,5 @@
 <template>
-  <div :hidden="!logged_in">
+  <div>
     <!--<h1>Books</h1>-->
     <b-pagination v-model="currentPage"
                   :total-rows="rows"
@@ -27,8 +27,14 @@
 
 <script>
 import axios from 'axios'
+import Vue from 'vue'
+import {BTable, BPagination} from 'bootstrap-vue'
+
+Vue.component('b-table', BTable)
+Vue.component('b-pagination', BPagination)
 
 export default {
+  name: 'BookBoard',
   data () {
     return {
       perPage: 5,
@@ -41,7 +47,7 @@ export default {
     }
   },
   created () {
-    axios.get(`${window.location.origin}/api/search_books`, {
+    axios.get(`${this.$hostname}/api/v1/books`, {
       params: {
         // TODO
         keyword: '미움받을 용기'

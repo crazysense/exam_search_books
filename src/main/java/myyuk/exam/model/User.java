@@ -1,5 +1,7 @@
 package myyuk.exam.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -13,6 +15,7 @@ public class User {
     @Column(name = "USER_ID")
     private String userId;
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(nullable = false, name = "USER_PASSWD")
     private String userPassword;
 

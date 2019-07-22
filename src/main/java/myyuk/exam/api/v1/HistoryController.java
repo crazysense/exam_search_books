@@ -1,4 +1,4 @@
-package myyuk.exam.controller;
+package myyuk.exam.api.v1;
 
 import myyuk.exam.model.History;
 import myyuk.exam.model.KeywordRank;

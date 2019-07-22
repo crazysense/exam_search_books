@@ -1,4 +1,4 @@
-package myyuk.exam.config;
+package myyuk.exam.auth;
 
 import org.h2.server.web.WebServlet;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;

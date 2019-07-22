@@ -139,6 +139,7 @@ public class SearchBooksServiceImpl implements SearchBooksService {
             book.setDatetime(parseDatetimeKakao(jsonBook.get("datetime")));
             book.setPrice(parseNumber(jsonBook.get("price")));
             book.setSalePrice(parseNumber(jsonBook.get("sale_price")));
+            book.setLink(String.valueOf(jsonBook.get("url")));
 
             books.add(book);
         }
@@ -166,6 +167,7 @@ public class SearchBooksServiceImpl implements SearchBooksService {
             book.setDatetime(parseDatetimeNaver(jsonBook.get("pubdate")));
             book.setPrice(parseNumber(jsonBook.get("price")));
             book.setSalePrice(parseNumber(jsonBook.get("discount")));
+            book.setLink(String.valueOf(jsonBook.get("link")));
             books.add(book);
         }
 
