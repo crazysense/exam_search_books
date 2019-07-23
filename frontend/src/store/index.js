@@ -6,34 +6,50 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    userId: null,
-    accessToken: null,
-    books: []
+    searchKeyword: '',
+    books: [],
+    booksTotal: 0
   },
   getters: {
-    isLoggedOn: state => {
-      return !!state.accessToken
+    isLoggedOn: () => {
+      return localStorage.session != null
     },
-    getBooks: state => {
-      return state.books
+    getUserId: () => {
+      return localStorage.session.userId
+    },
+    getBooks: () => {
+      return localStorage.books.books
+    },
+    getTotalBookCount: () => {
+      return localStorage.books.booksTotal
+    },
+    getSearchKeyword: () => {
+      return localStorage.books.searchKeyword
     }
   },
   mutations: {
+    SEARCH_BOOKS (state, {bookResult, searchKeyword}) {
+      localStorage.books = {
+        books: bookResult.books,
+        booksTotal: bookResult.totalCount,
+        searchKeyword: searchKeyword
+      }
+    },
     LOGIN (state, {userId, token}) {
-      state.userId = userId
-      state.accessToken = token
-      localStorage.accessToken = token
+      localStorage.session = {
+        userId: userId,
+        accessToken: token
+      }
       axios.defaults.headers.common['X-AUTH-TOKEN'] = token
     },
     LOGOUT (state) {
-      state.userId = null
-      state.accessToken = null
-      delete localStorage.accessToken
+      localStorage.books = {
+        books: [],
+        booksTotal: 0,
+        searchKeyword: ''
+      }
+      delete localStorage.session
       delete axios.defaults.headers.common['X-AUTH-TOKEN']
-    },
-    SEARCH_BOOKS (state, items) {
-      console.log('333: ' + items)
-      state.books = items
     }
   },
   actions: {
@@ -50,18 +66,25 @@ export default new Vuex.Store({
     LOGOUT ({commit}) {
       commit('LOGOUT')
     },
-    SEARCH_BOOKS ({commit}, {hostname, keyword}) {
+    SEARCH_BOOKS ({commit}, {hostname, keyword, page}) {
       axios.get(`${hostname}/api/v1/books`, {
         params: {
-          keyword: keyword
+          keyword: keyword,
+          page: page
         },
         timeout: 5000
       }).then(res => {
         console.log(`status code: ${res.status}`)
-        commit('SEARCH_BOOKS', res.data)
+        commit('SEARCH_BOOKS', {
+          bookResult: res.data,
+          searchKeyword: keyword
+        })
       }).catch(err => {
         console.log(err)
-        commit('SEARCH_BOOKS', [])
+        commit('SEARCH_BOOKS', {
+          bookResult: [],
+          searchKeyword: keyword
+        })
       })
     }
   }

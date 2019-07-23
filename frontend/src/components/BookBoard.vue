@@ -3,13 +3,11 @@
     <b-pagination v-model="currentPage"
                   :total-rows="rows"
                   :per-page="perPage"
-                  aria-controls="book-table"/>
+                  v-on:click.native="moreBooks(currentPage)"/>
     <div class="text-left">
       <b-table id="book-table" small striped hover
                :items="items"
-               :fields="fields"
-               :per-page="perPage"
-               :current-page="currentPage">
+               :fields="fields">
         <template slot="thumbnail" slot-scope="data">
           <img :src="data.item.thumbnail" alt="" width="120" height="180"/>
         </template>
@@ -64,6 +62,7 @@ export default {
     return {
       perPage: 10,
       currentPage: 1,
+      totalCount: 0,
       fields: [
         {key: 'thumbnail', thStyle: {display: 'none'}},
         {key: 'details', thStyle: {display: 'none'}},
@@ -74,8 +73,8 @@ export default {
   },
   computed: {
     rows () {
-      console.log('111: ' + this.$store.getters.getBooks.length)
-      return this.$store.getters.getBooks.length
+      console.log('111: ' + this.$store.getters.getTotalBookCount)
+      return this.$store.getters.getTotalBookCount
     },
     items () {
       console.log('222')
@@ -83,11 +82,19 @@ export default {
     }
   },
   methods: {
+    getSearchKeyword () {
+      return this.$store.getters.getSearchKeyword
+    },
     sendToModal (item) {
       this.selectedItem = item
     },
     authorText (item) {
       return item.author + ' 지음'
+    },
+    moreBooks (page) {
+      const keyword = this.getSearchKeyword()
+      const hostname = this.$hostname
+      this.$store.dispatch('SEARCH_BOOKS', {hostname, keyword, page})
     }
   }
 }

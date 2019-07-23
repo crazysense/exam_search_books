@@ -1,9 +1,7 @@
 package myyuk.exam.service;
 
-import myyuk.exam.model.Book;
-
-import java.util.List;
+import myyuk.exam.response.BookResponse;
 
 public interface SearchBooksService {
-    List<Book> search(String keyword);
+    BookResponse search(String keyword, int page);
 }

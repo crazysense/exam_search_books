@@ -1,8 +1,8 @@
-package myyuk.exam.auth;
+package myyuk.exam.rest.auth;
 
 import myyuk.exam.component.JwtTokenProvider;
-import myyuk.exam.model.AuthenticationToken;
-import myyuk.exam.model.User;
+import myyuk.exam.entity.User;
+import myyuk.exam.response.AuthenticationToken;
 import myyuk.exam.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;

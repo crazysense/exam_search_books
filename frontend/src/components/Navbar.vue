@@ -4,9 +4,13 @@
       <b-navbar-brand href="#">Search Books Exam</b-navbar-brand>
       <b-nav-form>
         <b-input-group>
-          <b-dropdown slot="prepend" variant="dark"></b-dropdown>
+          <b-dropdown slot="prepend" variant="dark">
+            <b-dropdown-item v-for="item in historyItems" :key="item.keyword" @click="keyword = item.keyword">
+              {{ item.keyword }} ({{ item.datetime }})
+            </b-dropdown-item>
+          </b-dropdown>
           <b-form-input v-model="keyword" placeholder="Keyword"></b-form-input>
-          <b-button slot="append" variant="success" @click="searchBooks">Search</b-button>
+          <b-button slot="append" variant="success" @click="searchBooks(keyword, 1)">Search</b-button>
         </b-input-group>
       </b-nav-form>
       <div class="ml-auto">
@@ -19,6 +23,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 import Vue from 'vue'
 import {BNavbar, BNavbarBrand, BNavbarNav, BNavbarToggle,
   BNavForm, BFormInput, BButton, BInputGroup, BDropdown, BDropdownItem} from 'bootstrap-vue'
@@ -38,17 +43,44 @@ export default {
   name: 'Navbar',
   data () {
     return {
-      keyword: ''
+      keyword: '',
+      historyItems: []
     }
   },
   methods: {
-    searchBooks () {
-      if (this.keyword.length === 0) {
+    addHistoryToLocal (hist) {
+      if (this.historyItems.length === 10) {
+        this.historyItems.pop()
+      }
+      this.historyItems.unshift(hist)
+    },
+    addHistoryToServer (hist) {
+      const userId = this.$store.getters.getUserId
+      axios.post(`${this.$hostname}/api/v1/history`, {
+        userId: userId,
+        keyword: hist.keyword,
+        datetime: hist.datetime
+      }).then(res => {
+        console.log(`status code: ${res.status}`)
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    getCurrentDate () {
+      return new Date().toISOString().split('.')[0].replace('T', ' ')
+    },
+    searchBooks (keyword, page) {
+      if (keyword.length === 0) {
         alert('Empty Keyword!')
       } else {
         const hostname = this.$hostname
-        const keyword = this.keyword
-        this.$store.dispatch('SEARCH_BOOKS', {hostname, keyword})
+        this.$store.dispatch('SEARCH_BOOKS', {hostname, keyword, page})
+
+        const now = this.getCurrentDate()
+        const hist = {keyword: keyword, datetime: now}
+
+        this.addHistoryToLocal(hist)
+        this.addHistoryToServer(hist)
       }
     },
     logout () {

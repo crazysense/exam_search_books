@@ -3,6 +3,7 @@ package myyuk.exam.service.impl;
 import myyuk.exam.component.SearchBooksApiProvider;
 import myyuk.exam.model.ApiRequest;
 import myyuk.exam.model.Book;
+import myyuk.exam.response.BookResponse;
 import myyuk.exam.service.SearchBooksService;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -36,35 +37,34 @@ public class SearchBooksServiceImpl implements SearchBooksService {
     private SearchBooksApiProvider apiProvider;
 
     @Override
-    public List<Book> search(String keyword) {
+    public BookResponse search(String keyword, int page) {
         List<ApiRequest> apis = apiProvider.getApis();
         if (apis == null || apis.isEmpty()) {
             logger.error("Not found SearchBooks API provider.");
-            return new ArrayList<>(0);
+            return null;
         }
 
-        List<Book> result = new ArrayList<>();
+        BookResponse result = null;
         for (ApiRequest api : apis) {
-            result = search(api, keyword);
-            if (result != null && !result.isEmpty()) {
+            if ((result = search(api, keyword, page)) != null) {
                 break;
             }
         }
         return result;
     }
 
-    private List<Book> search(ApiRequest apiRequest, String keyword) {
+    private BookResponse search(ApiRequest apiRequest, String keyword, int page) {
         String apiName = apiRequest.getName();
         try {
             if (apiName != null && !apiName.trim().isEmpty()) {
                 apiName = apiName.trim().toUpperCase();
                 switch (apiName) {
                     case "KAKAO":
-                        return searchForKakao(apiRequest, keyword);
+                        return searchForKakao(apiRequest, keyword, page);
                     case "NAVER":
-                        return searchForNaver(apiRequest, keyword);
+                        return searchForNaver(apiRequest, keyword, page);
                     default:
-                        logger.warn("Does not support API: " + apiRequest.getName());
+                        logger.error("Does not support API: " + apiRequest.getName());
                 }
             }
         } catch (ParseException e) {
@@ -113,18 +113,27 @@ public class SearchBooksServiceImpl implements SearchBooksService {
     }
 
     private String parseDatetimeKakao(Object value) {
-        return ZonedDateTime.parse(String.valueOf(value)).toLocalDate().toString();
+        if (value != null && !String.valueOf(value).isEmpty()) {
+            return ZonedDateTime.parse(String.valueOf(value)).toLocalDate().toString();
+        }
+        return "Unknown";
     }
 
     private String parseDatetimeNaver(Object value) {
-        return LocalDate.parse(String.valueOf(value), DateTimeFormatter.ofPattern("yyyyMMdd")).toString();
+        if (value != null && !String.valueOf(value).isEmpty()) {
+            return LocalDate.parse(String.valueOf(value), DateTimeFormatter.ofPattern("yyyyMMdd")).toString();
+        }
+        return "Unknown";
     }
 
-    private List<Book> searchForKakao(ApiRequest apiRequest, String keyword) throws IOException, ParseException {
-        String response = request(apiRequest, "?target=title&query=", keyword);
+    private BookResponse searchForKakao(ApiRequest apiRequest, String keyword, int page) throws IOException, ParseException {
+        String response = request(apiRequest, "?target=title&page=" + page + "&query=", keyword);
         JSONParser parser = new JSONParser();
         JSONObject object = (JSONObject) parser.parse(response);
         JSONArray array = (JSONArray) object.get("documents");
+
+        JSONObject meta = (JSONObject) object.get("meta");
+        int totalCount = parseNumber(meta.get("total_count"));
 
         List<Book> books = new ArrayList<>();
         for (Object item : array) {
@@ -144,14 +153,20 @@ public class SearchBooksServiceImpl implements SearchBooksService {
             books.add(book);
         }
 
-        return books;
+        BookResponse bookResponse = new BookResponse();
+        bookResponse.setBooks(books);
+        bookResponse.setTotalCount(totalCount);
+        return bookResponse;
     }
 
-    private List<Book> searchForNaver(ApiRequest apiRequest, String keyword) throws IOException, ParseException {
-        String response = request(apiRequest, "?query=", keyword);
+    private BookResponse searchForNaver(ApiRequest apiRequest, String keyword, int page) throws IOException, ParseException {
+        int start = 10 * page + 1;
+        String response = request(apiRequest, "?start=" + start + "&query=", keyword);
         JSONParser parser = new JSONParser();
         JSONObject object = (JSONObject) parser.parse(response);
         JSONArray array = (JSONArray) object.get("items");
+
+        int totalCount = parseNumber(object.get("total"));
 
         List<Book> books = new ArrayList<>();
         for (Object item : array) {
@@ -171,6 +186,9 @@ public class SearchBooksServiceImpl implements SearchBooksService {
             books.add(book);
         }
 
-        return books;
+        BookResponse bookResponse = new BookResponse();
+        bookResponse.setBooks(books);
+        bookResponse.setTotalCount(totalCount);
+        return bookResponse;
     }
 }

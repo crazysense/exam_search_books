@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Home from '@/components/Home'
 import Login from '@/components/Login'
+// import PopularTop10 from '@/components/PopularTop10'
 import store from '@/store'
 
 Vue.use(Router)

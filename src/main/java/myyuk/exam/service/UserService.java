@@ -1,6 +1,6 @@
 package myyuk.exam.service;
 
-import myyuk.exam.model.User;
+import myyuk.exam.entity.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 

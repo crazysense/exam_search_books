@@ -1,6 +1,6 @@
-package myyuk.exam.repo;
+package myyuk.exam.entity.repo;
 
-import myyuk.exam.model.User;
+import myyuk.exam.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserRepo extends JpaRepository<User, String> {

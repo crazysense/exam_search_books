@@ -1,4 +1,4 @@
-package myyuk.exam.model;
+package myyuk.exam.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

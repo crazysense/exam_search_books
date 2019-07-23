@@ -1,4 +1,4 @@
-package myyuk.exam.model;
+package myyuk.exam.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;

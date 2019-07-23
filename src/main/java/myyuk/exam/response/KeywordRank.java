@@ -1,7 +1,8 @@
-package myyuk.exam.model;
+package myyuk.exam.response;
 
 public class KeywordRank {
     private String keyword;
+
     private int searchCount;
 
     public KeywordRank() {

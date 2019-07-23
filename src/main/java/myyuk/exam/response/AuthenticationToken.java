@@ -1,4 +1,4 @@
-package myyuk.exam.model;
+package myyuk.exam.response;
 
 public class AuthenticationToken {
     private String userId;

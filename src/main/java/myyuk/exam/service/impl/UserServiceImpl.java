@@ -1,17 +1,14 @@
 package myyuk.exam.service.impl;
 
-import myyuk.exam.model.User;
-import myyuk.exam.repo.UserRepo;
+import myyuk.exam.entity.User;
+import myyuk.exam.entity.repo.UserRepo;
 import myyuk.exam.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.HttpServerErrorException;
 
 @Service
 public class UserServiceImpl implements UserService {

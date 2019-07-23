@@ -1,5 +1,6 @@
-package myyuk.exam.auth;
+package myyuk.exam.conf;
 
+import myyuk.exam.auth.JwtAuthenticationFilter;
 import myyuk.exam.component.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
