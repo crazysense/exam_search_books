@@ -50,4 +50,3 @@ $ java -jar ./search-books-0.1.jar
 
 ![screenshot](img/run/03.main.png)  
 
-## 다운로드  
