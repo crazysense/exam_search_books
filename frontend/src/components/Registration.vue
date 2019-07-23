@@ -10,7 +10,7 @@
           :invalid-feedback="invalidFeedbackId"
           :valid-feedback="validFeedbackId"
           :state="stateId">
-          <b-form-input id="input-id" v-model="regUserId" :state="stateId" type="text"></b-form-input>
+          <b-form-input v-model="regUserId" :state="stateId" type="text"></b-form-input>
         </b-form-group>
         <b-form-group
           id="fieldset-pwd"
@@ -20,7 +20,7 @@
           :invalid-feedback="invalidFeedbackPwd"
           :valid-feedback="validFeedbackPwd"
           :state="statePwd">
-          <b-form-input id="input-pwd" v-model="regUserPwd" :state="statePwd" type="password"></b-form-input>
+          <b-form-input @keydown.enter="submit" v-model="regUserPwd" :state="statePwd" type="password"></b-form-input>
         </b-form-group>
         <br/>
         <b-alert variant="danger" :show="regRequestFailed">

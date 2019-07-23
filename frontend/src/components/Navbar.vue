@@ -9,8 +9,11 @@
               {{ item.keyword }} ({{ item.datetime }})
             </b-dropdown-item>
           </b-dropdown>
-          <b-form-input v-model="searchKeyword" placeholder="Keyword"></b-form-input>
-          <b-button slot="append" variant="success" @click="searchBooks(searchKeyword, 1)">Search</b-button>
+          <b-form-input v-model="searchKeyword"
+                        placeholder="Keyword"
+                        @keydown.enter="searchBooks">
+          </b-form-input>
+          <b-button slot="append" variant="success" @click="searchBooks">Search</b-button>
         </b-input-group>
       </b-nav-form>
       <div class="ml-auto">
@@ -45,12 +48,13 @@ export default {
     store.dispatch('HISTORY', {hostname, userId})
   },
   methods: {
-    searchBooks (keyword, page) {
-      if (keyword.length === 0) {
+    searchBooks () {
+      if (this.searchKeyword.length === 0) {
         alert('Empty Keyword!')
       } else {
+        const keyword = this.searchKeyword
         const hostname = this.$hostname
-        store.dispatch('SEARCH_BOOKS', {hostname, keyword, page})
+        store.dispatch('SEARCH_BOOKS', {hostname, keyword, page: 1})
 
         const datetime = this.getCurrentDate()
         const hist = {keyword, datetime}

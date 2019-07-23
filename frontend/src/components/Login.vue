@@ -11,7 +11,7 @@
             :invalid-feedback="invalidFeedbackId"
             :valid-feedback="validFeedbackId"
             :state="stateId">
-            <b-form-input id="input-id" v-model="loginUserId" :state="stateId" type="text"></b-form-input>
+            <b-form-input v-model="loginUserId" :state="stateId" type="text"></b-form-input>
           </b-form-group>
           <b-form-group
             label="Enter your Password"
@@ -20,13 +20,18 @@
             :invalid-feedback="invalidFeedbackPwd"
             :valid-feedback="validFeedbackPwd"
             :state="statePwd">
-            <b-form-input id="input-pwd" v-model="loginUserPwd" :state="statePwd" type="password"></b-form-input>
+            <b-form-input v-model="loginUserPwd"
+                          @keydown.enter="submit"
+                          :state="statePwd"
+                          type="password">
+
+            </b-form-input>
           </b-form-group>
           <br/>
           <b-alert variant="danger" :show="loginRequestFailed">
             {{ loginErrorMessage }}
           </b-alert>
-          <b-button @click="submit(loginUserId, loginUserPwd)" variant="primary">Login</b-button>
+          <b-button @click="submit" variant="primary">Login</b-button>
           <b-button v-b-modal.registration-modal variant="info">Registration</b-button>
         </b-form>
       </div>
@@ -74,7 +79,7 @@ export default {
     }
   },
   methods: {
-    submit (userId, password) {
+    submit () {
       if (this.stateId === false) {
         this.loginErrorMessage = 'Wrong ID.'
         return
@@ -85,6 +90,8 @@ export default {
       }
 
       const hostname = this.$hostname
+      const userId = this.loginUserId
+      const password = this.loginUserPwd
       const router = this.$router
 
       store.dispatch('LOGIN', {
