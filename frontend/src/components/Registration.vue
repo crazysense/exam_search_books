@@ -39,17 +39,8 @@
 </template>
 
 <script>
-import Vue from 'vue'
 import axios from 'axios'
 import validation from '@/module/validation'
-
-import {BForm, BFormGroup, BFormInput, BButton, BAlert} from 'bootstrap-vue'
-
-Vue.component('b-form', BForm)
-Vue.component('b-form-group', BFormGroup)
-Vue.component('b-form-input', BFormInput)
-Vue.component('b-button', BButton)
-Vue.component('b-alert', BAlert)
 
 export default {
   name: 'Registration',
@@ -97,7 +88,8 @@ export default {
         return
       }
 
-      axios.post(`${this.$hostname}/user/registration`, {
+      const hostname = this.$hostname
+      axios.post(`${hostname}/user/registration`, {
         userId: this.regUserId,
         userPassword: this.regUserPwd
       }).then(res => {

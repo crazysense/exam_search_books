@@ -5,17 +5,17 @@
       <b-nav-form>
         <b-input-group>
           <b-dropdown slot="prepend" variant="dark">
-            <b-dropdown-item v-for="item in historyItems" :key="item.keyword" @click="keyword = item.keyword">
+            <b-dropdown-item v-for="item in historyItems" :key="item.keyword" @click="searchKeyword = item.keyword">
               {{ item.keyword }} ({{ item.datetime }})
             </b-dropdown-item>
           </b-dropdown>
-          <b-form-input v-model="keyword" placeholder="Keyword"></b-form-input>
-          <b-button slot="append" variant="success" @click="searchBooks(keyword, 1)">Search</b-button>
+          <b-form-input v-model="searchKeyword" placeholder="Keyword"></b-form-input>
+          <b-button slot="append" variant="success" @click="searchBooks(searchKeyword, 1)">Search</b-button>
         </b-input-group>
       </b-nav-form>
       <div class="ml-auto">
         <b-navbar-nav>
-          <b-button variant="info" @click="logout">Logout</b-button>
+          <b-button variant="danger" @click="logout">Logout</b-button>
         </b-navbar-nav>
       </div>
     </b-navbar>
@@ -23,78 +23,72 @@
 </template>
 
 <script>
-import axios from 'axios'
-import Vue from 'vue'
-import {BNavbar, BNavbarBrand, BNavbarNav, BNavbarToggle,
-  BNavForm, BFormInput, BButton, BInputGroup, BDropdown, BDropdownItem} from 'bootstrap-vue'
-
-Vue.component('b-navbar', BNavbar)
-Vue.component('b-navbar-brand', BNavbarBrand)
-Vue.component('b-navbar-nav', BNavbarNav)
-Vue.component('b-navbar-toggle', BNavbarToggle)
-Vue.component('b-nav-form', BNavForm)
-Vue.component('b-form-input', BFormInput)
-Vue.component('b-button', BButton)
-Vue.component('b-input-group', BInputGroup)
-Vue.component('b-dropdown', BDropdown)
-Vue.component('b-dropdown-item', BDropdownItem)
+import {mapGetters} from 'vuex'
+import store from '@/store'
 
 export default {
   name: 'Navbar',
   data () {
     return {
-      keyword: '',
-      historyItems: []
+      searchKeyword: ''
     }
   },
+  computed: {
+    ...mapGetters({
+      userId: 'getUserId',
+      historyItems: 'getMyHistory'
+    })
+  },
+  created () {
+    const hostname = this.$hostname
+    const userId = this.userId
+    store.dispatch('HISTORY', {hostname, userId})
+  },
   methods: {
-    addHistoryToLocal (hist) {
-      if (this.historyItems.length === 10) {
-        this.historyItems.pop()
-      }
-      this.historyItems.unshift(hist)
-    },
-    addHistoryToServer (hist) {
-      const userId = this.$store.getters.getUserId
-      axios.post(`${this.$hostname}/api/v1/history`, {
-        userId: userId,
-        keyword: hist.keyword,
-        datetime: hist.datetime
-      }).then(res => {
-        console.log(`status code: ${res.status}`)
-      }).catch(err => {
-        console.log(err)
-      })
-    },
-    getCurrentDate () {
-      return new Date().toISOString().split('.')[0].replace('T', ' ')
-    },
     searchBooks (keyword, page) {
       if (keyword.length === 0) {
         alert('Empty Keyword!')
       } else {
         const hostname = this.$hostname
-        this.$store.dispatch('SEARCH_BOOKS', {hostname, keyword, page})
+        store.dispatch('SEARCH_BOOKS', {hostname, keyword, page})
 
-        const now = this.getCurrentDate()
-        const hist = {keyword: keyword, datetime: now}
+        const datetime = this.getCurrentDate()
+        const hist = {keyword, datetime}
 
         this.addHistoryToLocal(hist)
-        this.addHistoryToServer(hist)
+
+        const userId = this.userId
+        store.dispatch('ADD_HISTORY', {hostname, userId, keyword, datetime})
       }
     },
     logout () {
       const router = this.$router
-      this.$store.dispatch('LOGOUT')
+      store.dispatch('LOGOUT')
         .then(() => {
           router.push({name: 'Login'})
         })
+    },
+    addHistoryToLocal (hist) {
+      let i = this.historyItems.length - 1
+      while (i >= 0) {
+        if (this.historyItems[i].keyword === hist.keyword) {
+          break
+        }
+        --i
+      }
+      if (i >= 0) {
+        this.historyItems.splice(i, 1)
+      }
+
+      this.historyItems.unshift(hist)
+
+      if (this.historyItems.length > 10) {
+        this.historyItems.pop()
+      }
+    },
+    getCurrentDate () {
+      return new Date().toISOString().split('.')[0].replace('T', ' ')
     }
   }
 }
-
 </script>
-
-<style>
-
-</style>

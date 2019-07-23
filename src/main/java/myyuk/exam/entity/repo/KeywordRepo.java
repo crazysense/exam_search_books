@@ -18,7 +18,7 @@ public interface KeywordRepo extends JpaRepository<Keyword, KeywordPk> {
 
     @Query(nativeQuery = true,
             value = "select k.keyword as keyword, " +
-                    "k.search_count as search_count " +
+                    "k.update_time as update_time " +
                     "from keyword k " +
                     "where k.user_id = ?1 " +
                     "order by update_time desc limit 10")

@@ -1,10 +1,8 @@
 package myyuk.exam.service.impl;
 
-import myyuk.exam.entity.Keyword;
-import myyuk.exam.entity.KeywordPk;
 import myyuk.exam.entity.repo.KeywordRepo;
 import myyuk.exam.response.KeywordRank;
-import myyuk.exam.service.SearchRankService;
+import myyuk.exam.service.BookRankService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class SearchRankServiceImpl implements SearchRankService {
+public class BookRankServiceImpl implements BookRankService {
 
     @Autowired
     private KeywordRepo keywordRepo;
@@ -21,21 +19,6 @@ public class SearchRankServiceImpl implements SearchRankService {
     @Override
     public List<KeywordRank> getRankTop10() {
         return convert(keywordRepo.findTop10Keyword());
-    }
-
-    @Override
-    public List<KeywordRank> getRecent10PerUser(String userId) {
-        return convert(keywordRepo.findRecently10KeywordByUser(userId));
-    }
-
-    @Override
-    public Keyword getKeyword(KeywordPk pk) {
-        return keywordRepo.findByKeywordByUser(pk);
-    }
-
-    @Override
-    public Keyword save(Keyword keyword) {
-        return keywordRepo.save(keyword);
     }
 
     private List<KeywordRank> convert(List<Object[]> result) {

@@ -9,12 +9,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/books")
+@RequestMapping("/api/v1")
 public class BooksController {
     @Autowired
     private SearchBooksService searchBooksService;
 
-    @GetMapping
+    @GetMapping(value = "/books")
     public BookResponse getBooksByKeyWord(@RequestParam String keyword, @RequestParam Integer page) {
         return searchBooksService.search(keyword, page);
     }

@@ -1,12 +1,12 @@
 <template>
   <div>
     <b-pagination v-model="currentPage"
-                  :total-rows="rows"
+                  :total-rows="bindRows"
                   :per-page="perPage"
                   v-on:click.native="moreBooks(currentPage)"/>
     <div class="text-left">
       <b-table id="book-table" small striped hover
-               :items="items"
+               :items="bindItems"
                :fields="fields">
         <template slot="thumbnail" slot-scope="data">
           <img :src="data.item.thumbnail" alt="" width="120" height="180"/>
@@ -50,11 +50,8 @@
 </template>
 
 <script>
-import Vue from 'vue'
-import {BTable, BPagination} from 'bootstrap-vue'
-
-Vue.component('b-table', BTable)
-Vue.component('b-pagination', BPagination)
+import { mapGetters } from 'vuex'
+import store from '@/store'
 
 export default {
   name: 'BookBoard',
@@ -72,19 +69,13 @@ export default {
     }
   },
   computed: {
-    rows () {
-      console.log('111: ' + this.$store.getters.getTotalBookCount)
-      return this.$store.getters.getTotalBookCount
-    },
-    items () {
-      console.log('222')
-      return this.$store.getters.getBooks
-    }
+    ...mapGetters({
+      bindRows: 'getTotalBookCount',
+      bindItems: 'getBooks',
+      bindKeyword: 'getSearchKeyword'
+    })
   },
   methods: {
-    getSearchKeyword () {
-      return this.$store.getters.getSearchKeyword
-    },
     sendToModal (item) {
       this.selectedItem = item
     },
@@ -92,9 +83,9 @@ export default {
       return item.author + ' 지음'
     },
     moreBooks (page) {
-      const keyword = this.getSearchKeyword()
+      const keyword = this.bindKeyword
       const hostname = this.$hostname
-      this.$store.dispatch('SEARCH_BOOKS', {hostname, keyword, page})
+      store.dispatch('SEARCH_BOOKS', {hostname, keyword, page})
     }
   }
 }

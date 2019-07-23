@@ -36,16 +36,9 @@
 </template>
 
 <script>
-import Vue from 'vue'
 import validation from '@/module/validation'
 import Registration from '@/components/Registration'
-
-import {BForm, BFormGroup, BJumbotron, BAlert} from 'bootstrap-vue'
-
-Vue.component('b-form', BForm)
-Vue.component('b-form-group', BFormGroup)
-Vue.component('b-jumbotron', BJumbotron)
-Vue.component('b-alert', BAlert)
+import store from '@/store'
 
 export default {
   name: 'Login',
@@ -94,7 +87,7 @@ export default {
       const hostname = this.$hostname
       const router = this.$router
 
-      this.$store.dispatch('LOGIN', {
+      store.dispatch('LOGIN', {
         hostname, userId, password
       }).then(() => {
         router.push({name: 'Home'})
@@ -110,7 +103,3 @@ export default {
   }
 }
 </script>
-
-<style>
-
-</style>

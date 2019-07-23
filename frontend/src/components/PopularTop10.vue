@@ -10,14 +10,8 @@
 </template>
 
 <script>
-import Vue from 'vue'
 import axios from 'axios'
-
-import {BListGroup, BListGroupItem, BBadge} from 'bootstrap-vue'
-
-Vue.component('b-list-group', BListGroup)
-Vue.component('b-list-group-item', BListGroupItem)
-Vue.component('b-badge', BBadge)
+import {mapGetters} from 'vuex'
 
 export default {
   name: 'PopularTop10',
@@ -26,19 +20,23 @@ export default {
       popularTop10: []
     }
   },
+  computed: {
+    ...mapGetters(['isLoggedIn'])
+  },
   created () {
     setInterval(() => {
-      if (this.$store.getters.isLoggedOn) {
-        axios.get(`${this.$hostname}/api/v1/history/rank`, {
+      if (this.isLoggedIn) {
+        const hostname = this.$hostname
+        axios.get(`${hostname}/api/v1/rank`, {
           timeout: 5000
         }).then(res => {
+          console.log(`status code: ${res.status}`)
           this.popularTop10 = res.data
         }).catch(err => {
           console.log(err)
         })
       }
-    }, 5000)
+    }, 3000)
   }
 }
-
 </script>
