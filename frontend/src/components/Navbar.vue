@@ -10,8 +10,7 @@
             </b-dropdown-item>
           </b-dropdown>
           <b-form-input v-model="searchKeyword"
-                        placeholder="Keyword"
-                        @keydown.enter="searchBooks">
+                        placeholder="Keyword">
           </b-form-input>
           <b-button slot="append" variant="success" @click="searchBooks">Search</b-button>
         </b-input-group>
